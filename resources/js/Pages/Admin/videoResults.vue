@@ -41,6 +41,13 @@ import TVTable from '@/Components/table/TVTable.vue'
 import axios from 'axios';
 import InputLabel from '@/Components/InputLabel.vue';
 import SelectInput from '@/Components/SelectInput.vue';
+import { stridedSlice, string } from '@tensorflow/tfjs-node';
+
+interface opt {
+  value: string,
+  text: string
+};
+
 export default defineComponent({
     //name : "videoResults",
     setup () {
@@ -62,8 +69,8 @@ export default defineComponent({
     },
     data() {
         return {
-            users: [],
-            projects: [],
+            users: [] as opt[],
+            projects: [] as opt[],
             query : reactive({
                 id : this.video.id,
                 page : 1,

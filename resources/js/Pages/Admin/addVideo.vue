@@ -4,8 +4,8 @@
             <div class="p-10">
             <div class="flex flex-col items-center justify-center  mt-4">
 
-                <vimeoPlayer :video-id="form.id_video" :videoUrl="form.url_video" :controls="true" @playing="getplaying">
-                </vimeoPlayer>
+                <vimeoPlayerComponent :video-id="form.id_video" :videoUrl="form.url_video" :controls="true" @playing="getplaying">
+                </vimeoPlayerComponent>
                 <div class="flex items-center justify-end mt-4">
                 </div>
 
@@ -74,7 +74,7 @@ import Modal from '@/Components/Modal.vue'
 import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
-import vimeoPlayer from '@/Components/players/vimeoPlayer.vue';
+import vimeoPlayerComponent from '@/Components/players/vimeoPlayerComponent.vue';
 
 export default defineComponent({
     setup() {
@@ -91,7 +91,7 @@ export default defineComponent({
         InputError,
         InputLabel,
         Modal,
-        vimeoPlayer
+        vimeoPlayerComponent
     },
     props : {
         video : {

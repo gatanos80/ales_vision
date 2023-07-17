@@ -90,14 +90,14 @@ export default defineComponent({
                                                 d="M13.243 3.2 7.359 9.081a.5.5 0 0 0-.136.256L6.51 12.9a.5.5 0 0 0 .59.59l3.566-.713a.5.5 0 0 0 .255-.136L16.8 6.757 13.243 3.2Z" />
                                         </svg>
                                     </Link>
-                                    <button  class="rounded-md bg-sky-800 p-2 m-2">
+                                    <Link  class="rounded-md bg-sky-800 p-2 m-2" :href="route('admin.VideoResults', [item.id])">
                                         <svg class="w-4 h-4 text-white dark:text-white" aria-hidden="true"
                                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                                 stroke-width="2"
                                                 d="M9 5h6M9 8h6m-6 3h6M4.996 5h.01m-.01 3h.01m-.01 3h.01M2 1h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1Z" />
                                         </svg>
-                                    </button>
+                                    </Link>
                                 </td>
                             </tr>
                         </tbody>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <VideoPlayer   
+        <vimeo-player   
             ref="player" 
             id="player" 
             :video-url="videoUrl" 
@@ -16,14 +16,14 @@
             @playing ="playing($event)"
             @pause ="$emit('pause', $event)"
             @ended ="ended($event)"
-            ></VideoPlayer>
+            ></vimeo-player>
 
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { vueVimeoPlayer } from '@/customModules/vue-vimeo-player'
+import  {vueVimeoPlayer}  from '@/customModules/vue-vimeo-player'
 
 export default defineComponent({
     setup () {
@@ -31,8 +31,8 @@ export default defineComponent({
 
         return {}
     },
-    name : "vimeoPlayer",
-    components: { "VideoPlayer" : vueVimeoPlayer },
+    name : "vimeoPlayerComponent",
+    components: {vimeoPlayer :  vueVimeoPlayer as any },
     props :{
         videoId : {
             type : String,
@@ -73,7 +73,7 @@ export default defineComponent({
         },
         data() {
             return {
-                listenerCampionamento: {} as Object
+                listenerCampionamento: undefined as ReturnType<typeof setTimeout> | undefined,
             }
         },
         watch: {
@@ -98,27 +98,27 @@ export default defineComponent({
         },
         methods: {
         onReady() {
-			this.playerReady = true
+			//this.playerReady = true
 		},
 		play () {
-			this.$refs.player.play()
+			(this.$refs.player as any).play()
 		},
 		pause () {
-			this.$refs.player.pause()
+			(this.$refs.player as any).pause()
             clearInterval(this.listenerCampionamento)
 
 		},
-        ended(e){
-            this.$refs.player.restart();
+        ended(e : any ){
+            (this.$refs.player as any).restart();
             this.$emit('ended', e)
-            this.$emit('campiona', this.$refs.player.getCurrentTime())            
+            this.$emit('campiona', (this.$refs.player as any).getCurrentTime())            
             clearInterval(this.listenerCampionamento)
         },
-        playing(e){
+        playing(e : any ){
             var self= this
             this.$emit('playing', e)
             this.listenerCampionamento= setInterval(()=>{
-                self.$refs.player.getCurrentTime().then(seconds=>{
+                (this.$refs.player as any).getCurrentTime().then((seconds : Number) =>{
                 self.$emit('campiona', seconds)            
             })
             }, 1000 )

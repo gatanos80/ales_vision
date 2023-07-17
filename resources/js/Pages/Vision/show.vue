@@ -2,9 +2,9 @@
     <div id="vision" class="container mx-auto flex flex-wrap flex-col items-center	s	">
         <video class="video" id="video" width="720" height="560" autoplay muted></video>
 
-        <vimeoPlayer :video-id="video.id_video" :videoUrl="video.url_video"
+        <vimeoPlayerComponent :video-id="video.id_video" :videoUrl="video.url_video"
             :startVideo="playVideo" :controls="false" @play="getplay" @playing="getplaying" @pause="getpause"
-            @ended="getended" @campiona="campiona"></vimeoPlayer>
+            @ended="getended" @campiona="campiona"></vimeoPlayerComponent>
         <PrimaryButton v-if="status.faceDetected && !isPlaying && !isEnded" @click.native="playVideo = true;"
             :disabled="false">Start
         </PrimaryButton>
@@ -18,7 +18,7 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from 'vue'
 import * as faceapi from 'face-api.js';
-import vimeoPlayer from '@/Components/players/vimeoPlayer.vue'
+import vimeoPlayerComponent from '@/Components/players/vimeoPlayerComponent.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { expressions } from "@/types/vision"
 import axios from 'axios';
@@ -32,7 +32,7 @@ export default defineComponent({
         return {}
     },
     components: {
-        vimeoPlayer: vimeoPlayer,
+        vimeoPlayerComponent: vimeoPlayerComponent,
         PrimaryButton: PrimaryButton
     },
     props : {
@@ -93,13 +93,15 @@ export default defineComponent({
             faceapi.nets.ageGenderNet.loadFromUri('/models')
 
         ]).then(startVideo)
-        const navig: HTMLVideoElement = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        let myNav : any;
+        myNav= navigator
+        const navig: any = myNav.getUserMedia || myNav.webkitGetUserMedia || myNav.mozGetUserMedia;
         function startVideo() {
-            if (navigator.getUserMedia) {
-                navigator.getUserMedia(
+            if (myNav.getUserMedia) {
+                myNav.getUserMedia(
                     { video: {} },
-                    stream => video.srcObject = stream,
-                    err => console.error(err)
+                    (stream : any)  => video.srcObject = stream,
+                    (err : any) => console.error(err)
                 )
             }
         }
