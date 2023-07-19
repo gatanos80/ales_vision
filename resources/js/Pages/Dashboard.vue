@@ -4,7 +4,7 @@ import { defineComponent, reactive, ref } from 'vue'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { Link } from '@inertiajs/vue3';
 
 import axios from 'axios';
 

@@ -20,12 +20,13 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return redirect()->route('dashboard');
+   /* return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
-    ]);
+    ]);*/
 });
 
 Route::get('/dashboard', function () {
@@ -41,6 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/new_video', [adminController::class, 'saveVideo'])->name('admin.saveVideo');
     Route::get('/editVideo/{id}', [adminController::class, 'editVideo'])->name('admin.editVideo');
     Route::get('/getvideoresults/{id}', [adminController::class, 'videoResults'])->name('admin.VideoResults');
+    Route::get('/exportallresults/{id}', [adminController::class, 'exportResultsAll'])->name('admin.exportResultsAll');
 
     
     //API

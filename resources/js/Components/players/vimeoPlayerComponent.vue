@@ -39,12 +39,12 @@ export default defineComponent({
             default : ""
         },
         height : {
-            type : String || Number,
-            default : "500"
+            type :  Number,
+            default : 500
         },
         width : {
-            type : String || Number,
-            default : "500"
+            type : Number,
+            default : 500
         },
         videoUrl : {
             type : String,

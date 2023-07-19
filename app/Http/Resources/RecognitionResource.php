@@ -20,15 +20,15 @@ class RecognitionResource extends JsonResource
             'user' => $this->user,
             'progetto' => $this->progetto,
             'time' => round($this->time),
-            'age' => $this->age,
+            'age' => number_format($this->age,6,',','.'),
             'gender' => $this->gender,
-            'angry' => $this->angry,
-            'disgusted' => $this->disgusted,
-            'fearful' => $this->fearful,
-            'happy' => $this->happy,
-            'neutral' => $this->neutral,
-            'sad' => $this->sad,
-            'surprised' => $this->surprised
+            'angry' => number_format($this->angry,6,',','.'),
+            'disgusted' => number_format($this->disgusted,6,',','.'),
+            'fearful' => number_format($this->fearful,6,',','.'),
+            'happy' => number_format($this->happy,6,',','.'),
+            'neutral' => number_format($this->neutral,6,',','.'),
+            'sad' => number_format($this->sad,6,',','.'),
+            'surprised' => number_format($this->surprised,6,',','.'),
 
 
         ];

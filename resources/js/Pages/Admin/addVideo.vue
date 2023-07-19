@@ -22,31 +22,51 @@
             <div class="w-full px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg">
 
                 <form @submit.prevent="submit">
-                    <div>
+                    <div class="mt-4">
                         <InputLabel for="code" value="Code" />
                         <TextInput id="code" type="text" class="mt-1 block w-full" v-model="form.code"  autofocus required
                             autocomplete="code" />
                         <InputError class="mt-2" :message="form.errors.code" />
                     </div>
-                    <div>
+                    <div class="mt-4">
                         <InputLabel for="title" value="Title" />
                         <TextInput id="title" type="text" class="mt-1 block w-full" v-model="form.title"  autofocus required
                             autocomplete="title" />
                         <InputError class="mt-2" :message="form.errors.title" />
                     </div>
-                    <div>
-                        <InputLabel for="id_video" value="Id" />
+                    <div class="mt-4">
+                        <InputLabel for="id_video" value="Id Vimeo" />
                         <TextInput  @change="url_checked=false" id="id_video" type="text" class="mt-1 block w-full" v-model="form.id_video" required
                             autofocus autocomplete="id_video" />
                         <InputError class="mt-2" :message="form.errors.id_video" />
                     </div>
                     <div class="mt-4">
-                        <InputLabel for="url" value="URL" />
+                        <InputLabel for="url" value="URL Vimeo" />
                         <TextInput @change="url_checked=false" id="url" type="text" class="mt-1 block w-full" v-model="form.url_video" required
                             autocomplete="url" />
                         <InputError class="mt-2" :message="form.errors.url_video" />
                     </div>
+                    <div class="mt-4">
+                        <InputLabel for="return_link" value="Return URL" />
+                        <TextInput  id="return_link" type="text" class="mt-1 block w-full" v-model="form.return_link" required
+                            autocomplete="return_link" />
+                            <small>Use [ID_PROGETTO],[ID_USER] to identify project and user variables, eg : https://www2.fieldwork2000.it/ssi8/test123?uid=[ID_USER]&prj=[ID_PROGETTO]</small>
+                            <small> these fields will be populated with the task execution input values</small>
 
+                        <InputError class="mt-2" :message="form.errors.return_link" />
+                    </div>
+                    <div class="mt-4">
+                        <InputLabel for="no_detection_label" value="No Detection Label" />
+                        <TextInput  id="no_detection_label" type="text" class="mt-1 block w-full" v-model="form.no_detection_label" required
+                            autocomplete="no_detection_label" />
+                        <InputError class="mt-2" :message="form.errors.no_detection_label" />
+                    </div>
+                    <div class="mt-4">
+                        <InputLabel for="start_label" value="Start Button Label" />
+                        <TextInput  id="start_label" type="text" class="mt-1 block w-full" v-model="form.start_label" required
+                            autocomplete="start_label" />
+                        <InputError class="mt-2" :message="form.errors.start_label" />
+                    </div>                   
                     <div class="flex items-center justify-end mt-4">
 
                         <PrimaryButton v-if="url_checked" class="ml-4" :class="{ 'opacity-25': form.processing }"
@@ -109,6 +129,9 @@ export default defineComponent({
                 title: '',
                 id_video: '',
                 url_video: '',
+                return_link: "",
+                no_detection_label: "",
+                start_label : "",
                 type: 1
             })
         }
@@ -120,6 +143,9 @@ export default defineComponent({
             this.form.title =this.video.title
             this.form.id_video =this.video.id_video
             this.form.url_video =this.video.url_video
+            this.form.return_link =this.video.return_link
+            this.form.no_detection_label =this.video.no_detection_label
+            this.form.start_label =this.video.start_label
             ///this.form.code = this.video
             this.url_checked= true
         }
