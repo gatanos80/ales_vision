@@ -17,12 +17,12 @@
             @pause ="$emit('pause', $event)"
             @ended ="ended($event)"
             ></vimeo-player>
-
+        <p hidden>{{ refresh }}</p>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, reactive } from 'vue'
 import  {vueVimeoPlayer}  from '@/customModules/vue-vimeo-player'
 
 export default defineComponent({
@@ -34,6 +34,10 @@ export default defineComponent({
     name : "vimeoPlayerComponent",
     components: {vimeoPlayer :  vueVimeoPlayer as any },
     props :{
+        setTime: {
+            type: Number,
+            default: 0
+        },
         videoId : {
             type : String,
             default : ""
@@ -42,10 +46,10 @@ export default defineComponent({
             type :  Number,
             default : 500
         },
-        width : {
+        width : reactive({
             type : Number,
             default : 500
-        },
+        }),
         videoUrl : {
             type : String,
             default : ""
@@ -73,13 +77,29 @@ export default defineComponent({
         },
         data() {
             return {
+                refreshing: false,
+                refresh: 0,
                 listenerCampionamento: undefined as ReturnType<typeof setTimeout> | undefined,
             }
         },
         watch: {
+            setTime(val){
+                (this.$refs.player as any).setCurrentTime(val)
+            },
             startVideo(val){
                 if(val) this.play()
-            }
+            },
+            width(val){
+                this.refresh++
+                this.refreshing = true
+                this.$nextTick(()=>{
+                    this.refreshing = false
+
+                })
+            },
+            height(val){
+                this.refresh++
+            } 
         },
         mounted() {
             var self = this
@@ -93,10 +113,22 @@ export default defineComponent({
                 },1000)
             })*/
         },
-        beforeUnmount() {
+        
+       async beforeUnmount() {
             clearInterval(this.listenerCampionamento)
+            var self = this;
+            await (this.$refs.player as any).getCurrentTime().then(async (sec : any)=>{
+                    self.$emit('currentTime',sec) 
+
+            })
         },
         methods: {
+        /*    resize(val : any){
+                console.log("resize", val);
+                //this.$emit('resize', (this.$refs.player as any).getCurrentTime())            
+
+                
+            },*/
         onReady() {
 			//this.playerReady = true
 		},
@@ -128,6 +160,3 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-
-</style>

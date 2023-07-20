@@ -1,29 +1,34 @@
 <template>
-    <div id="vision" class="container mx-auto flex flex-wrap flex-col items-center	s	">
+    <div id="vision" class="container mx-auto flex flex-wrap flex-col items-center p-5	m-5">
         <video class="video" id="video" width="720" height="560" autoplay muted></video>
         <label v-if="no_webcam" class="text-red-600"><span>Webcam not found</span></label>
 
-        
-        <vimeoPlayerComponent :video-id="video.id_video" :videoUrl="video.url_video" :startVideo="playVideo" :height="height" :width="width"
-            :controls="false" @play="getplay" @playing="getplaying" @pause="getpause" @ended="getended"
-            @campiona="campiona"></vimeoPlayerComponent>
+
+        <vimeoPlayerComponent v-if="!resizing" :video-id="video.id_video" :videoUrl="video.url_video"
+            :startVideo="playVideo" :height="height" :width="width" :options="vimeoOptions" :controls="false"
+            :setTime="setTime" @play="getplay" @playing="getplaying" @pause="getpause" @ended="getended"
+            @campiona="campiona" @currentTime="getCurrentTime"></vimeoPlayerComponent>
         <template v-if="webcam_streaming">
 
             <template v-if="status.faceDetected && !isPlaying && !isEnded">
-                <PrimaryButton @click.native="playVideo = true;" :disabled="false">{{ video.start_label ? video.start_label
+                <PrimaryButton class="m-5" @click.native="playVideo = true;" :disabled="false">{{ video.start_label ?
+                    video.start_label
                     :
                     "Start" }}
                 </PrimaryButton>
             </template>
             <template v-if="!status.faceDetected && !isPlaying">
-                <label class="block font-medium text-sm text-gray-700">
+                <label class="block font-medium text-sm text-gray-700 m-5">
                     <span v-if="video.no_detection_label">{{ video.no_detection_label }}</span>
                     <span v-else>face not found</span>
                 </label>
             </template>
         </template>
         <template v-else>
-                <label v-if="!no_webcam" class="text-green-600"><span>Activating the Webcam</span></label>
+            <div class="p-5">
+
+                <label v-if="!no_webcam" class="text-green-600 p-5"><span>Activating the Webcam</span></label>
+            </div>
         </template>
 
 
@@ -40,7 +45,6 @@ import vimeoPlayerComponent from '@/Components/players/vimeoPlayerComponent.vue'
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { expressions } from "@/types/vision"
 import axios from 'axios';
-import { string } from '@tensorflow/tfjs-node';
 
 export default defineComponent({
     name: "show",
@@ -84,8 +88,11 @@ export default defineComponent({
                 } as expressions
             },
             init: "",
-            height: 600,
-            width: 600,
+            setTime: 0,
+
+            vimeoOptions: {} as any,
+            height: ref(700),
+            width: ref(700),
             status: reactive({
                 faceDetected: false
             }),
@@ -94,17 +101,45 @@ export default defineComponent({
             isEnded: false,
             campionaInterval: undefined as ReturnType<typeof setInterval> | undefined,
             enableStartTimeout: undefined as ReturnType<typeof setTimeout> | undefined,
+            timeoutMaxTimeNoPlayButton: undefined as ReturnType<typeof setTimeout> | undefined,
             startTimeoutSetted: false,
             webcam_streaming: false,
-            no_webcam: false
+            no_webcam: false,
+            next_url: "",
+            resizing: false,
+            currentTime: 0
 
         }
     },
+    beforeMount() {
+        this.height = Math.round(window.innerHeight * 0.8)
+        this.width = Math.round(window.innerWidth * 0.8)
+
+    },
     async mounted() {
         var self = this
-        console.log(this.init);
+
         const video = document.getElementById('video') as HTMLVideoElement
-        console.log({ video });
+
+       /* window.addEventListener("resize", () => {
+            self.height = Math.round(window.innerHeight * 0.8)
+            self.width = Math.round(window.innerWidth * 0.8)
+            console.log("playerResize");
+
+            //this.setTime=val
+            var isPlaying = this.isPlaying
+            this.playVideo = false
+            this.resizing = true;
+            this.$nextTick(() => {
+                this.resizing = false;
+                this.$nextTick(() => {
+                    this.setTime = this.currentTime
+                    this.playVideo = isPlaying
+
+                })
+            })
+        });*/
+
 
         //const detection = await faceapi.detectSingleFace(video)
         Promise.all([
@@ -129,6 +164,9 @@ export default defineComponent({
                     (err: any) => {
                         console.error(err)
                         self.no_webcam = true
+                        setTimeout(() => {
+                            window.location.href = self.next_url + '&webcamerror=1'
+                        }, 30000)
                     }
                 )
             }
@@ -136,7 +174,10 @@ export default defineComponent({
 
         video.addEventListener('play', () => {
             var self = this
+            self.timeoutMaxTimeNoPlayButton = setTimeout(() => {
+                window.location.href = self.next_url + '&webcamerror=2'
 
+            }, 30000);
 
             const vision = document.getElementById('vision') as HTMLElement
             this.campionaInterval = setInterval(async () => {
@@ -145,7 +186,7 @@ export default defineComponent({
                     self.webcam_streaming = true
 
                 }, 800);
-                console.log(detections);
+                //console.log(detections);
                 if (this.isPlaying) {
                     self.detection.index++
                     if (detections) {
@@ -158,6 +199,7 @@ export default defineComponent({
                     if (!self.startTimeoutSetted) {
                         this.enableStartTimeout = setTimeout(() => {
                             self.status.faceDetected = detections != undefined
+                            clearTimeout(self.timeoutMaxTimeNoPlayButton)
                         }, 1000)
                         self.startTimeoutSetted = true
                     }
@@ -173,8 +215,28 @@ export default defineComponent({
             }, 100)
 
         })
+        var next_url = this.video.return_link
+        if (next_url.indexOf('[ID_USER]')) next_url = next_url.replaceAll('[ID_USER]', this.user_id)
+        if (next_url.indexOf('[ID_PROGETTO]')) next_url = next_url.replaceAll('[ID_PROGETTO]', this.id_proj)
+        this.next_url = next_url
     },
     methods: {
+        getCurrentTime(val : any){
+            console.log("getCurrentTime", val);
+            
+            if(!this.currentTime) this.currentTime =  val
+        },
+       /* playerResize(val: any) {
+            console.log("playerResize");
+
+            this.setTime = val
+            this.resizing = true;
+            this.$nextTick(() => {
+                this.resizing = false;
+                this.playVideo = true
+
+            })
+        },*/
         getplay(ev: any) {
             console.log("play", ev);
 
@@ -195,18 +257,14 @@ export default defineComponent({
             this.isPlaying = false
             this.isEnded = true
             clearInterval(this.campionaInterval)
-            var next_url = this.video.return_link
-            if (next_url.indexOf('[ID_USER]')) next_url = next_url.replace('[ID_USER]', this.user_id)
-            if (next_url.indexOf('[ID_PROGETTO]')) next_url = next_url.replace('[ID_PROGETTO]', this.id_proj)
+
             setTimeout(() => {
-                window.location.href = next_url;
+                window.location.href = this.next_url;
             }, 1000);
 
         },
         campiona(ev: any) {
-            console.log(ev);
             if (!this.isEnded) {
-                console.log("campiona", this.detection);
                 var campionamento_to_send = Object.assign({}, this.detection)
                 this.detection = {
                     index: 0,

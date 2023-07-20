@@ -107,6 +107,12 @@ var script = {
     var getCurrentTime = function getCurrentTime() {
       return player.getCurrentTime()
     };
+    var setCurrentTime = function getCurrentTime(val) {
+      console.log("setCurrentTime player", val);
+      return player.setCurrentTime(val)
+        .then(()=>{})
+        .catch(()=>{})
+    };
     var unmute = function unmute() {
       var volume = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0.5;
       return player.setVolume(volume);
@@ -168,6 +174,7 @@ var script = {
       unmute: unmute,
       restart: restart,
       getCurrentTime: getCurrentTime,
+      setCurrentTime: setCurrentTime,
       elementRef: elementRef,
       player: player
     };
