@@ -14,7 +14,6 @@ class ExportRecognitions implements FromCollection, WithHeadings, WithMapping
     protected $project;
     protected $user;
 
-    
     public function __construct(int $video , string | null $user, string | null $project)
     {
         $this->video = $video;
